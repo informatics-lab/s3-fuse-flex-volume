@@ -49,7 +49,6 @@ func Mount(target string, options map[string]string) interface{} {
 	createMode := os.FileMode(createModeUint64)
 
 	sharePath := options["share"]
-	fmt.Printf("target:%s, share:%s, options:%v", target, sharePath, options)
 	//createUid := strconv.Atoi(options["createUid"])
 	//createGid := strconv.Atoi(options["createGid"])
 
@@ -68,7 +67,6 @@ func Mount(target string, options map[string]string) interface{} {
 	srcPath := path.Join(mountPath, subPath)
 
 	if createIfNecessary {
-		fmt.Printf("test %v", createIfNecessary)
 		err := os.MkdirAll(srcPath, createMode)
 		if err != nil {
 			return makeResponse("Failure", fmt.Sprintf("Could not create subPath: %s", err.Error()))
