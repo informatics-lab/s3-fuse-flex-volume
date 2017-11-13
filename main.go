@@ -27,6 +27,15 @@ func Init() interface{} {
 	return resp
 }
 
+func isMountPoint(path string) bool {
+	cmd := exec.Command("mountpoint", path)
+	err := cmd.Run()
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 /// If NFS hasn't been mounted yet, mount!
 /// If mounted, bind mount to appropriate place.
 func Mount(target string, options map[string]string) interface{} {
@@ -46,12 +55,14 @@ func Mount(target string, options map[string]string) interface{} {
 
 	mountPath := fmt.Sprintf("/mnt/nfsflexvolume/%s/options/%s", sharePath, sortedOpts)
 
-	os.MkdirAll(mountPath, 0755)
+	if !isMountPoint(mountPath) {
+		os.MkdirAll(mountPath, 0755)
 
-	mountCmd := exec.Command("mount", "-t", "nfs4", sharePath, mountPath, "-o", sortedOpts)
-	out, err := mountCmd.CombinedOutput()
-	if err != nil {
-		return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
+		mountCmd := exec.Command("mount", "-t", "nfs4", sharePath, mountPath, "-o", sortedOpts)
+		out, err := mountCmd.CombinedOutput()
+		if err != nil {
+			return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
+		}
 	}
 
 	srcPath := path.Join(mountPath, subPath)
@@ -65,7 +76,7 @@ func Mount(target string, options map[string]string) interface{} {
 	}
 
 	bindMountCmd := exec.Command("mount", "--bind", path.Join(mountPath, subPath), target)
-	out, err = bindMountCmd.CombinedOutput()
+	out, err := bindMountCmd.CombinedOutput()
 	if err != nil {
 		return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
 	}
