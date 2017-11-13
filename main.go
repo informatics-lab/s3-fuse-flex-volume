@@ -29,7 +29,7 @@ func Init() interface{} {
 
 /// If NFS hasn't been mounted yet, mount!
 /// If mounted, bind mount to appropriate place.
-func Mount(target, device string, options map[string]string) interface{} {
+func Mount(target string, options map[string]string) interface{} {
 	opts := strings.Split(options["mountOptions"], ",")
 	sort.Strings(opts)
 	sortedOpts := strings.Join(opts, ",")
@@ -38,14 +38,17 @@ func Mount(target, device string, options map[string]string) interface{} {
 	createIfNecessary := options["createIfNecessary"] == "true"
 	createModeUint64, err := strconv.ParseUint(options["createMode"], 0, 32)
 	createMode := os.FileMode(createModeUint64)
+
+	sharePath := options["share"]
+	fmt.Printf("target:%s, share:%s, options:%v", target, sharePath, options)
 	//createUid := strconv.Atoi(options["createUid"])
 	//createGid := strconv.Atoi(options["createGid"])
 
-	mountPath := fmt.Sprintf("/mnt/nfsflexvolume/%s/options/%s", device, sortedOpts)
+	mountPath := fmt.Sprintf("/mnt/nfsflexvolume/%s/options/%s", sharePath, sortedOpts)
 
 	os.MkdirAll(mountPath, 0755)
 
-	mountCmd := exec.Command("mount", "-t", "nfs4", device, mountPath, "-o", sortedOpts)
+	mountCmd := exec.Command("mount", "-t", "nfs4", sharePath, mountPath, "-o", sortedOpts)
 	out, err := mountCmd.CombinedOutput()
 	if err != nil {
 		return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
@@ -91,12 +94,12 @@ func main() {
 	switch action := os.Args[1]; action {
 	case "init":
 		printJSON(Init())
-	case "mountdevice":
-		optsString := os.Args[4]
+	case "mount":
+		optsString := os.Args[3]
 		opts := make(map[string]string)
 		json.Unmarshal([]byte(optsString), &opts)
-		printJSON(Mount(os.Args[2], os.Args[3], opts))
-	case "unmountdevice":
+		printJSON(Mount(os.Args[2], opts))
+	case "unmount":
 		printJSON(Unmount(os.Args[2]))
 	default:
 		printJSON(makeResponse("Not supported", fmt.Sprintf("Operation %s is not supported", action)))
