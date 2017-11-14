@@ -3,4 +3,4 @@ image:
   tag: v0.1
   pullPolicy: IfNotPresent
 flexVolume:
-  pluginDir: /homes/kubernetes/flexvolume
+  pluginDir: /home/kubernetes/flexvolume
