@@ -73,20 +73,21 @@ func Mount(target string, options map[string]string) interface{} {
 		}
 	}
 
-	bindMountCmd := exec.Command("mount", "--bind", path.Join(mountPath, subPath), target)
-	out, err := bindMountCmd.CombinedOutput()
+	// Now we rmdir the target, and then make a symlink to it!
+	err = os.Remove(target)
 	if err != nil {
-		return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
+		return makeResponse("Failure", err.Error())
 	}
+
+	err = os.Symlink(srcPath, target)
 
 	return makeResponse("Success", "Mount completed!")
 }
 
 func Unmount(mountPath string) interface{} {
-	umountCmd := exec.Command("umount", mountPath)
-	out, err := umountCmd.CombinedOutput()
+	err := os.Remove(mountPath)
 	if err != nil {
-		return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
+		return makeResponse("Failure", err.Error())
 	}
 	return makeResponse("Success", "Successfully unmounted")
 }
