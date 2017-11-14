@@ -1,0 +1,6 @@
+image:
+  repository: yuvipanda/nfs-flex-volume
+  tag: v0.1
+  pullPolicy: IfNotPresent
+flexVolume:
+  pluginDir: /homes/kubernetes/flexvolume
