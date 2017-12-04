@@ -19,7 +19,12 @@ spec:
           volumeMounts:
             - mountPath: /flexmnt
               name: flexvolume-plugindir
+            - mountPath: /hostbin
+              name: flexvolume-usrlocalbin
       volumes:
         - name: flexvolume-plugindir
           hostPath:
             path: {{ .Values.flexVolume.pluginDir | quote }}
+        - name: flexvolume-usrlocalbin
+          hostPath:
+            path: '/usr/local/bin'
