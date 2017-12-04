@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"strconv"
 )
 
 func makeResponse(status, message string) map[string]interface{} {
