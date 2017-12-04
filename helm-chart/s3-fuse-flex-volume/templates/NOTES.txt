@@ -1,0 +1,2 @@
+A flexVolume of type informaticslab.co.uk/s3-fuse-flex-volume has been registered
+to your kubernetes cluster!

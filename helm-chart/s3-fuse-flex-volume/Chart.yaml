@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for deploying s3-fuse-flex-volume
+name: s3-fuse-flex-volume
+version: 0.1.0

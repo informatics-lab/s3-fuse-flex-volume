@@ -1,0 +1,6 @@
+image:
+  repository: informaticslab/s3-fuse-flex-volume
+  tag: latest
+  pullPolicy: IfNotPresent
+flexVolume:
+  pluginDir: /home/kubernetes/flexvolume

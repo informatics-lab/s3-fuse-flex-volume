@@ -1,2 +1,0 @@
-A flexVolume of type yuvi.in/nfs-flex-volume has been registered
-to your kubernetes cluster!

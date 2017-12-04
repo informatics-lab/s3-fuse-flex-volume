@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 
 VENDOR=yuvi.in
-DRIVER=nfs-flex-volume
+DRIVER=s3-fuse-flex-volume
 
 # Assuming the single driver file is located at /$DRIVER inside the DaemonSet image.
 
@@ -15,6 +15,8 @@ fi
 
 cp "/$DRIVER" "/flexmnt/$driver_dir/.$DRIVER"
 mv -f "/flexmnt/$driver_dir/.$DRIVER" "/flexmnt/$driver_dir/$DRIVER"
+
+cp "/usr/local/src/*" "/usr/local/bin/"
 
 while : ; do
     sleep 3600

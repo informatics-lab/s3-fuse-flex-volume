@@ -6,9 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"sort"
 	"strconv"
-	"strings"
 )
 
 func makeResponse(status, message string) map[string]interface{} {
@@ -39,25 +37,14 @@ func isMountPoint(path string) bool {
 /// If NFS hasn't been mounted yet, mount!
 /// If mounted, bind mount to appropriate place.
 func Mount(target string, options map[string]string) interface{} {
-	opts := strings.Split(options["mountOptions"], ",")
-	sort.Strings(opts)
-	sortedOpts := strings.Join(opts, ",")
 
 	subPath := options["subPath"]
-	createIfNecessary := options["createIfNecessary"] == "true"
-	createModeUint64, err := strconv.ParseUint(options["createMode"], 0, 32)
-	createMode := os.FileMode(createModeUint64)
-
-	sharePath := options["share"]
-	//createUid := strconv.Atoi(options["createUid"])
-	//createGid := strconv.Atoi(options["createGid"])
-
-	mountPath := fmt.Sprintf("/mnt/nfsflexvolume/%s/options/%s", sharePath, sortedOpts)
+	mountPath := "/mnt/s3fuseflexvolume"
 
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
 
-		mountCmd := exec.Command("mount", "-t", "nfs4", sharePath, mountPath, "-o", sortedOpts)
+		mountCmd := exec.Command("/usr/local/bin/s3fuseenv.pex", "/usr/local/bin/s3fuse.py", mountPath)
 		out, err := mountCmd.CombinedOutput()
 		if err != nil {
 			return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
@@ -66,15 +53,8 @@ func Mount(target string, options map[string]string) interface{} {
 
 	srcPath := path.Join(mountPath, subPath)
 
-	if createIfNecessary {
-		err := os.MkdirAll(srcPath, createMode)
-		if err != nil {
-			return makeResponse("Failure", fmt.Sprintf("Could not create subPath: %s", err.Error()))
-		}
-	}
-
 	// Now we rmdir the target, and then make a symlink to it!
-	err = os.Remove(target)
+	err := os.Remove(target)
 	if err != nil {
 		return makeResponse("Failure", err.Error())
 	}
@@ -84,8 +64,8 @@ func Mount(target string, options map[string]string) interface{} {
 	return makeResponse("Success", "Mount completed!")
 }
 
-func Unmount(mountPath string) interface{} {
-	err := os.Remove(mountPath)
+func Unmount(target string) interface{} {
+	err := os.Remove(target)
 	if err != nil {
 		return makeResponse("Failure", err.Error())
 	}
