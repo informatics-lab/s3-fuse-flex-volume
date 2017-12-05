@@ -42,13 +42,8 @@ func Mount(target string, options map[string]string) interface{} {
 
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
-
 		mountCmd := exec.Command("/usr/local/bin/s3fuseenv.pex", "/usr/local/bin/s3fuse.py", mountPath)
-		mountCmd.Stdout = os.Stdout
-		err := mountCmd.Start()
-		if err != nil {
-			return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), ""))
-		}
+		mountCmd.Start()
 	}
 
 	srcPath := path.Join(mountPath, subPath)
