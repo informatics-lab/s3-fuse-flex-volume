@@ -44,9 +44,10 @@ func Mount(target string, options map[string]string) interface{} {
 		os.MkdirAll(mountPath, 0755)
 
 		mountCmd := exec.Command("/usr/local/bin/s3fuseenv.pex", "/usr/local/bin/s3fuse.py", mountPath)
-		out, err := mountCmd.CombinedOutput()
+		mountCmd.Stdout = os.Stdout
+		err := mountCmd.Start()
 		if err != nil {
-			return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), out))
+			return makeResponse("Failure", fmt.Sprintf("%s: %s", err.Error(), ""))
 		}
 	}
 
