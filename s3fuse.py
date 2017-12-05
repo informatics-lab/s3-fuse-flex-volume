@@ -13,10 +13,11 @@ from botocore.exceptions import ClientError
 # Logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-ch.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
-logger.addHandler(ch)
+if '--debug' in sys.argv:
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+    logger.addHandler(ch)
 
 """
 With thanks to @perrygeo(https://gist.github.com/perrygeo)
@@ -89,6 +90,37 @@ def obj_type(path):
         else:
             raise # Something else has gone wrong.
 
+@lru_cache(maxsize=512)
+def list_bucket(path):
+    logger.info("Requested ls for %s", path)
+    bucket, key = parse_path(path)
+    logger.info("Requested ls for bucket %s , key %s", bucket, key)
+
+    if not bucket:
+        return ['.', '..']
+
+    try:
+        def parse(entry):
+            prefix = key[:-1] if key and key[-1] == '/' else key
+            s3_key = entry['Key']
+            after_fix = s3_key[len(prefix):]
+            if(after_fix[0] == '/'):
+                # show next level
+                return after_fix.split('/')[1]
+            else :
+                # finish this level
+                # TODO: bug if key ends with '/' but who would do that!?
+                return prefix.split('/')[-1] + after_fix.split('/')[0]
+
+        items = boto3.client('s3').list_objects_v2(Bucket=bucket,Prefix=key)['Contents']
+        items = map(parse, items)
+        items = list(set(items))
+    except KeyError:
+        items = []
+
+    logger.info("Found %s for %s", items, path)
+
+    return ['.', '..'] + items
 
 class S3Reader(object):
     def __init__(self, path):
@@ -144,36 +176,12 @@ class S3FileSystemMount(Operations):
         return
 
     def readdir(self, path, fh):
-        logger.info("Requested ls for %s", path)
-        bucket, key = parse_path(path)
-        logger.info("Requested ls for bucket %s , key %s", bucket, key)
-        try:
-            def parse(entry):
-                prefix = key[:-1] if key[-1] == '/' else key
-                s3_key = entry['Key']
-                after_fix = s3_key[len(prefix):]
-                if(after_fix[0] == '/'):
-                    # show next level
-                    return after_fix.split('/')[1]
-                else :
-                    # finish this level
-                    # TODO: bug if key ends with '/' but who would do that!?
-                    return prefix.split('/')[-1] + after_fix.split('/')[0]
-
-            items = boto3.client('s3').list_objects_v2(Bucket=bucket,Prefix=key)['Contents']
-            items = map(parse, items)
-            items = list(set(items))
-        except KeyError:
-            items = []
-
-        logger.info("Found %s for %s", items, path)
-
-        return ['.', '..'] + items
+        return list_bucket(path)
 
 
 if __name__ == '__main__':
-    if len(argv) != 2:
-        print('usage: %s <mountpoint>' % argv[0])
+    if len(argv) not in [2, 3]:
+        print('usage: %s <mountpoint> [--debug]' % argv[0])
         exit(1)
 
     logger.info("Starting up s3 fuse at mount point %s", argv[1])
