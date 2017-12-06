@@ -185,4 +185,4 @@ if __name__ == '__main__':
         exit(1)
 
     logger.info("Starting up s3 fuse at mount point %s", argv[1])
-    fuse = FUSE(S3FileSystemMount(),argv[1], foreground=True)
+    fuse = FUSE(S3FileSystemMount(),argv[1], foreground=True, allow_other=True)
