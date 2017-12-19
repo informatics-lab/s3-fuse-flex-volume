@@ -42,7 +42,7 @@ func Mount(target string, options map[string]string) interface{} {
 
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
-		mountCmd := exec.Command("pyssix", mountPath)
+		mountCmd := exec.Command("pysssix", mountPath)
 		mountCmd.Start()
 	}
 
