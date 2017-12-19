@@ -5,23 +5,15 @@ set -o pipefail
 
 VENDOR=informaticslab
 DRIVER=s3-fuse-flex-volume
+PLUGIN_DIR=/rootfs/usr/libexec/kubernetes/kubelet-plugins/volume/exec/
 
+## Install driver
 # Assuming the single driver file is located at /$DRIVER inside the DaemonSet image.
 
 driver_dir=$VENDOR${VENDOR:+"~"}${DRIVER}
-if [ ! -d "/flexmnt/$driver_dir" ]; then
-    mkdir "/flexmnt/$driver_dir"
+if [ ! -d "$PLUGIN_DIR/$driver_dir" ]; then
+    mkdir "$PLUGIN_DIR/$driver_dir"
 fi
 
-cp "/$DRIVER" "/flexmnt/$driver_dir/.$DRIVER"
-mv -f "/flexmnt/$driver_dir/.$DRIVER" "/flexmnt/$driver_dir/$DRIVER"
-
-cp "/usr/local/src/s3fuse.py" "/hostbin/.s3fuse.py"
-mv -f "/hostbin/.s3fuse.py" "/hostbin/s3fuse.py"
-
-cp "/usr/local/src/s3fuseenv.pex" "/hostbin/.s3fuseenv.pex"
-mv -f "/hostbin/.s3fuseenv.pex" "/hostbin/s3fuseenv.pex"
-
-while : ; do
-    sleep 3600
-done
+cp "/$DRIVER" "$PLUGIN_DIR/$driver_dir/.$DRIVER"
+mv -f "$PLUGIN_DIR/$driver_dir/.$DRIVER" "$PLUGIN_DIR/$driver_dir/$DRIVER"

@@ -1,6 +1,0 @@
-image:
-  repository: informaticslab/s3-fuse-flex-volume
-  tag: latest
-  pullPolicy: Always
-flexVolume:
-  pluginDir: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
