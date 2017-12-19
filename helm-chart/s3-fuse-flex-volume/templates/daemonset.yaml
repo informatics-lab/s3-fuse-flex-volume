@@ -11,9 +11,9 @@ spec:
       labels:
         app: s3-fuse-flex-volume-deployer
     spec:
-      containers:
-        - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          name: s3-fuse-flex-volume-deploy
+      initContainers:
+        - name: s3-fuse-flex-volume-deploy
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           securityContext:
               privileged: true
           volumeMounts:
@@ -21,6 +21,9 @@ spec:
               name: flexvolume-plugindir
             - mountPath: /hostbin
               name: flexvolume-usrlocalbin
+      containers:
+        - name: pause
+          image: gcr.io/google_containers/pause
       volumes:
         - name: flexvolume-plugindir
           hostPath:

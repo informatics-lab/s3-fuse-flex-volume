@@ -15,13 +15,3 @@ fi
 
 cp "/$DRIVER" "/flexmnt/$driver_dir/.$DRIVER"
 mv -f "/flexmnt/$driver_dir/.$DRIVER" "/flexmnt/$driver_dir/$DRIVER"
-
-cp "/usr/local/src/s3fuse.py" "/hostbin/.s3fuse.py"
-mv -f "/hostbin/.s3fuse.py" "/hostbin/s3fuse.py"
-
-cp "/usr/local/src/s3fuseenv.pex" "/hostbin/.s3fuseenv.pex"
-mv -f "/hostbin/.s3fuseenv.pex" "/hostbin/s3fuseenv.pex"
-
-while : ; do
-    sleep 3600
-done
