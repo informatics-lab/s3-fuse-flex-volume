@@ -59,8 +59,8 @@ func Mount(target string, options map[string]string) interface{} {
 	srcPath := path.Join(mountPath, subPath)
 
 	// Create subpath if it does not exist
-	intDirMode, _ := strconv.Atoi(dirMode)
-	os.MkdirAll(srcPath, intDirMode)
+	intDirMode, _ := strconv.ParseUint(dirMode, 8, 32)
+	os.MkdirAll(srcPath, os.FileMode(intDirMode))
 
 	// Now we rmdir the target, and then make a symlink to it!
 	err := os.Remove(target)
