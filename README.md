@@ -34,7 +34,10 @@ volumes:
     flexVolume:
       driver: "informaticslab/pysssix-fuse-flex-volume"
       options:
+        # Required
         readonly: "true"
+        # Optional
+        subPath: "key/prefix"
 containers:
   - name: mycontainer
     ...
@@ -53,7 +56,12 @@ volumes:
     flexVolume:
       driver: "informaticslab/goofys-fuse-flex-volume"
       options:
+        # Required
         bucket: "mybucket"
+        # Optional
+        dirMode: "0755"
+        fileMode: "0644"
+        subPath: "key/prefix"
 containers:
   - name: mycontainer
     ...
