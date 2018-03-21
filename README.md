@@ -2,7 +2,7 @@
 
 [![Docker Image](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/informaticslab/s3-fuse-flex-volume/) [![Docker Layers](https://images.microbadger.com/badges/image/informaticslab/s3-fuse-flex-volume.svg)](https://microbadger.com/#/images/informaticslab/s3-fuse-flex-volume)
 
-This helm chart adds S3 FUSE flex volume drivers.
+This helm chart adds S3 FUSE flex volume drivers to your kubernetes cluster.
 
 The flex volume drivers require the `fuse` package and the S3 fuse libraries to be installed on the host nodes, the chart assumes the hosts are running ubuntu and uses a privileged container to install these. It then installs the flex volume drivers.
 
