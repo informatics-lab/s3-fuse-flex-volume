@@ -34,8 +34,6 @@ volumes:
     flexVolume:
       driver: "informaticslab/pysssix-fuse-flex-volume"
       options:
-        # Required
-        readonly: "true"
         # Optional
         subPath: "key/prefix"
 containers:
@@ -48,7 +46,7 @@ containers:
 
 ### goofys
 
-Goofys will only mount a specific bucket so you much provide the `bucket` option.
+Goofys will only mount a specific bucket so you must provide the `bucket` option.
 
 ```yaml
 volumes:
