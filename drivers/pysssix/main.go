@@ -38,7 +38,7 @@ func isMountPoint(path string) bool {
 func Mount(target string, options map[string]string) interface{} {
 
 	subPath := options["subPath"]
-	mountPath := "/mnt/s3fuseflexvolume"
+	mountPath := "/mnt/pysssix"
 
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
