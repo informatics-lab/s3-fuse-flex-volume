@@ -12,7 +12,19 @@ spec:
         app: s3-fuse-flex-volume-deployer
     spec:
       initContainers:
-        - name: s3-fuse-flex-volume-deploy
+        - name: install-host-deps
+          image: busybox:latest
+          imagePullPolicy: Always
+          securityContext:
+              privileged: true
+          volumeMounts:
+            - mountPath: /rootfs
+              name: rootfs
+          command:
+            - sh
+            - -c
+            - chroot /rootfs apt-get update && chroot /rootfs apt-get install -y fuse python3-pip && chroot /rootfs pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache && chroot /rootfs curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest && chroot /rootfs chmod +x /usr/bin/goofys
+        - name: s3-flex-volume-drivers-deploy
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: Always
           securityContext:
@@ -32,3 +44,7 @@ spec:
         - name: flexvolume-usrlocalbin
           hostPath:
             path: '/usr/local/bin'
+        - name: rootfs
+          hostPath:
+            path: /
+            type: Directory

@@ -1,17 +1,22 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -o errexit
 set -o pipefail
 
 VENDOR=informaticslab
-DRIVER=s3-fuse-flex-volume
+declare -a DRIVERS=("pysssix-flex-volume-driver" "goofys-flex-volume-driver")
 
-# Assuming the single driver file is located at /$DRIVER inside the DaemonSet image.
+for DRIVER in "${DRIVERS[@]}"
+do
+    echo "Installing $DRIVER"
+    driver_dir=$VENDOR${VENDOR:+"~"}${DRIVER}
+    if [ ! -d "/flexmnt/$driver_dir" ]; then
+        mkdir "/flexmnt/$driver_dir"
+    fi
 
-driver_dir=$VENDOR${VENDOR:+"~"}${DRIVER}
-if [ ! -d "/flexmnt/$driver_dir" ]; then
-    mkdir "/flexmnt/$driver_dir"
-fi
+    cp "/$DRIVER" "/flexmnt/$driver_dir/.$DRIVER"
+    mv -f "/flexmnt/$driver_dir/.$DRIVER" "/flexmnt/$driver_dir/$DRIVER"
+done
 
-cp "/$DRIVER" "/flexmnt/$driver_dir/.$DRIVER"
-mv -f "/flexmnt/$driver_dir/.$DRIVER" "/flexmnt/$driver_dir/$DRIVER"
+echo "Listing installed drivers:"
+ls /flexmnt
