@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
 )
 
 func makeResponse(status, message string) map[string]interface{} {
@@ -58,7 +59,8 @@ func Mount(target string, options map[string]string) interface{} {
 	srcPath := path.Join(mountPath, subPath)
 
 	// Create subpath if it does not exist
-	os.MkdirAll(srcPath, 0755)
+	intDirMode, _ := strconv.Atoi(dirMode)
+	os.MkdirAll(srcPath, intDirMode)
 
 	// Now we rmdir the target, and then make a symlink to it!
 	err := os.Remove(target)
