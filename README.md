@@ -6,7 +6,7 @@ This helm chart adds S3 FUSE flex volume drivers to your kubernetes cluster.
 
 The flex volume drivers require the `fuse` package and the S3 fuse libraries to be installed on the host nodes, the chart assumes the hosts are running ubuntu and uses a privileged container to install these. It then installs the flex volume drivers.
 
-This chart requires Kubernetes 1.9+ as previous versions require the `kubelet` to be restarted to pick up new flex volume drivers.
+This chart requires Kubernetes 1.8+ as previous versions require the `kubelet` to be restarted to pick up new flex volume drivers.
 
 Included S3 FUSE libraries:
  - [pysssix](https://github.com/met-office-lab/pysssix)
