@@ -32,7 +32,7 @@ With this driver you are limited to read only.
 volumes:
   - name: pysssix
     flexVolume:
-      driver: "informaticslab/pysssix-fuse-flex-volume"
+      driver: "informaticslab/pysssix-flex-volume"
       options:
         # Optional
         subPath: "key/prefix"
@@ -52,7 +52,7 @@ Goofys will only mount a specific bucket so you must provide the `bucket` option
 volumes:
   - name: goofys-mybucket
     flexVolume:
-      driver: "informaticslab/goofys-fuse-flex-volume"
+      driver: "informaticslab/goofys-flex-volume"
       options:
         # Required
         bucket: "mybucket"
