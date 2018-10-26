@@ -36,7 +36,7 @@ spec:
               name: flexvolume-usrlocalbin
       containers:
         - name: pause
-          image: gcr.io/google_containers/pause
+          image: gcr.io/google-containers/pause
       volumes:
         - name: flexvolume-plugindir
           hostPath:
