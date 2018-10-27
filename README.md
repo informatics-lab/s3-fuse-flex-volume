@@ -60,6 +60,8 @@ volumes:
         dirMode: "0755"
         fileMode: "0644"
         subPath: "key/prefix"
+        access-key: "XXXXXXXXXXXXXXXXXXXX"
+        secret-key: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 containers:
   - name: mycontainer
     ...

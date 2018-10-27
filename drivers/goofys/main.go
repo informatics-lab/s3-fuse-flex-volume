@@ -41,18 +41,34 @@ func Mount(target string, options map[string]string) interface{} {
 	bucket := options["bucket"]
 	subPath := options["subPath"]
 	dirMode, ok := options["dirMode"]
-	if ! ok {
+	if !ok {
 		dirMode = "0755"
 	}
 	fileMode, ok := options["fileMode"]
-	if ! ok {
+	if !ok {
 		fileMode = "0644"
 	}
+
+	args := []string{
+		"-o", "allow_other",
+		"--dir-mode", dirMode,
+		"--file-mode", fileMode,
+	}
+
+	if accessKey, ok := options["access-key"]; ok {
+		args = append(args, "--access-key", accessKey)
+	}
+	if secretKey, ok := options["secret-key"]; ok {
+		args = append(args, "--secret-key", secretKey)
+	}
+
 	mountPath := path.Join("/mnt/goofys", bucket)
+
+	args = append(args, bucket, mountPath)
 
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
-		mountCmd := exec.Command("goofys", "-o", "allow_other", "--dir-mode", dirMode, "--file-mode", fileMode, bucket, mountPath)
+		mountCmd := exec.Command("goofys", args...)
 		mountCmd.Start()
 	}
 
