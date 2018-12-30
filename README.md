@@ -60,6 +60,8 @@ volumes:
         dirMode: "0755"
         fileMode: "0644"
         subPath: "key/prefix"
+        endpoint: "s3.not-aws.com"
+        region: "us-east-1"
         access-key: "XXXXXXXXXXXXXXXXXXXX"
         secret-key: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 containers:
