@@ -61,6 +61,12 @@ func Mount(target string, options map[string]string) interface{} {
 	if secretKey, ok := options["secret-key"]; ok {
 		args = append(args, "--secret-key", secretKey)
 	}
+	if endpoint, ok := options["endpoint"]; ok {
+		args = append(args, "--endpoint", endpoint)
+	}
+	if region, ok := options["region"]; ok {
+		args = append(args, "--region", region)
+	}
 
 	mountPath := path.Join("/mnt/goofys", bucket)
 
