@@ -74,6 +74,8 @@ func Mount(target string, options map[string]string) interface{} {
 
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
+		exec.Command("umount", mountPath).Run()
+		
 		mountCmd := exec.Command("goofys", args...)
 		mountCmd.Env = os.Environ()
 		if accessKey, ok := options["access-key"]; ok {
