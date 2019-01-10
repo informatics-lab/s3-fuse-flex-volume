@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -64,9 +63,10 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--region", region)
 	}
 
-        if debug_s3, ok := options["debug_s3"]; ok && debug_s3 == "true" {
-                args = append(args, "--debug_s3")
-        }
+	debug_s3, ok := options["debug_s3"]
+	if ok && debug_s3 == "true" {
+		args = append(args, "--debug_s3")
+	}
 
 	mountPath := path.Join("/mnt/goofys", bucket)
 
@@ -86,9 +86,9 @@ func Mount(target string, options map[string]string) interface{} {
 		mountCmd.Stderr = &stderr
 		err := mountCmd.Run()
 		if err != nil {
-			errMsg = err.Error() + ": " + stderr.String()
-			if debug_s3 {
-				errMsg += Sprintf("; /var/log/syslog follows")
+			errMsg := err.Error() + ": " + stderr.String()
+			if debug_s3 == "true" {
+				errMsg += fmt.Sprintf("; /var/log/syslog follows")
 				grepCmd := exec.Command("sh", "-c", "grep goofys /var/log/syslog | tail")
 				var stdout bytes.Buffer
 				grepCmd.Stdout = &stdout
