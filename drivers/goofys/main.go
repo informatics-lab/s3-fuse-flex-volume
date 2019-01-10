@@ -76,10 +76,10 @@ func Mount(target string, options map[string]string) interface{} {
 		mountCmd := exec.Command("goofys", args...)
 		mountCmd.Env = os.Environ()
 		if accessKey, ok := options["access-key"]; ok {
-			mountCmd.Env = append(mountCmd.Env, fmt.Sprintf("AWS_ACCESS_KEY_ID=", accessKey))
+			mountCmd.Env = append(mountCmd.Env, "AWS_ACCESS_KEY_ID=" + accessKey)
 		}
 		if secretKey, ok := options["secret-key"]; ok {
-			mountCmd.Env = append(mountCmd.Env, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=", secretKey))
+			mountCmd.Env = append(mountCmd.Env, "AWS_SECRET_ACCESS_KEY=" + secretKey)
 		}
 		var stderr bytes.Buffer
 		mountCmd.Stderr = &stderr
