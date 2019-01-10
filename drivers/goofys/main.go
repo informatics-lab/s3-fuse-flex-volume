@@ -76,7 +76,12 @@ func Mount(target string, options map[string]string) interface{} {
 		if secretKey, ok := options["secret-key"]; ok {
 			mountCmd.Env = append(mountCmd.Env, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=", secretKey))
 		}
-		mountCmd.Start()
+		var stderr = bytes.Buffer
+		mountCmd.Stderr = &stderr
+		err := mountCmd.Run()
+		if err != nil {
+			return makeResponse("Failure", err.Error() + ": " + stderr.String())
+		}
 	}
 
 	srcPath := path.Join(mountPath, subPath)
