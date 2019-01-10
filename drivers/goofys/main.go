@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -76,7 +77,7 @@ func Mount(target string, options map[string]string) interface{} {
 		if secretKey, ok := options["secret-key"]; ok {
 			mountCmd.Env = append(mountCmd.Env, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=", secretKey))
 		}
-		var stderr = bytes.Buffer
+		var stderr bytes.Buffer
 		mountCmd.Stderr = &stderr
 		err := mountCmd.Run()
 		if err != nil {
