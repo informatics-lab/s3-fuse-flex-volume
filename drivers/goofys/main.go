@@ -63,6 +63,10 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--region", region)
 	}
 
+        if debug_s3, ok := options["debug_s3"]; ok && debug_s3 == "true" {
+                args = append(args, "--debug_s3")
+        }
+
 	mountPath := path.Join("/mnt/goofys", bucket)
 
 	args = append(args, bucket, mountPath)

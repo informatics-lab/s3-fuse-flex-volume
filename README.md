@@ -60,7 +60,8 @@ volumes:
         dirMode: "0755"
         fileMode: "0644"
         subPath: "key/prefix"
-        endpoint: "s3.not-aws.com"
+        endpoint: "https://s3.not-aws.com/"
+        debug_s3: true # logs to /var/log/syslog
         region: "us-east-1"
         access-key: "XXXXXXXXXXXXXXXXXXXX"
         secret-key: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
