@@ -73,8 +73,9 @@ func Mount(target string, options map[string]string) interface{} {
 	args = append(args, bucket, mountPath)
 
 	if !isMountPoint(mountPath) {
-		os.MkdirAll(mountPath, 0755)
 		exec.Command("umount", mountPath).Run()
+		exec.Command("rm", "-rf", mountPath).Run()
+		os.MkdirAll(mountPath, 0755)
 		
 		mountCmd := exec.Command("goofys", args...)
 		mountCmd.Env = os.Environ()
