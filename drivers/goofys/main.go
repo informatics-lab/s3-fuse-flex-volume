@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -85,7 +86,16 @@ func Mount(target string, options map[string]string) interface{} {
 		mountCmd.Stderr = &stderr
 		err := mountCmd.Run()
 		if err != nil {
-			return makeResponse("Failure", err.Error() + ": " + stderr.String())
+			errMsg = err.Error() + ": " + stderr.String()
+			if debug_s3 {
+				errMsg += Sprintf("; /var/log/syslog follows")
+				grepCmd := exec.Command("sh", "-c", "grep goofys /var/log/syslog | tail")
+				var stdout bytes.Buffer
+				grepCmd.Stdout = &stdout
+				grepCmd.Run()
+				errMsg += stdout.String()
+			}
+			return makeResponse("Failure", errMsg)
 		}
 	}
 
