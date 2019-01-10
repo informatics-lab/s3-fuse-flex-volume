@@ -19,4 +19,4 @@ do
 done
 
 echo "Listing installed drivers:"
-ls /flexmnt
+ls -l /flexmnt
