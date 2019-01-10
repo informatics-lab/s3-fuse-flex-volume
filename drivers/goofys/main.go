@@ -55,12 +55,6 @@ func Mount(target string, options map[string]string) interface{} {
 		"--file-mode", fileMode,
 	}
 
-	if accessKey, ok := options["access-key"]; ok {
-		args = append(args, "--access-key", accessKey)
-	}
-	if secretKey, ok := options["secret-key"]; ok {
-		args = append(args, "--secret-key", secretKey)
-	}
 	if endpoint, ok := options["endpoint"]; ok {
 		args = append(args, "--endpoint", endpoint)
 	}
@@ -75,6 +69,13 @@ func Mount(target string, options map[string]string) interface{} {
 	if !isMountPoint(mountPath) {
 		os.MkdirAll(mountPath, 0755)
 		mountCmd := exec.Command("goofys", args...)
+		mountCmd.Env = os.Environ()
+		if accessKey, ok := options["access-key"]; ok {
+			mountCmd.Env = append(mountCmd.Env, fmt.Sprintf("AWS_ACCESS_KEY_ID=", accessKey))
+		}
+		if secretKey, ok := options["secret-key"]; ok {
+			mountCmd.Env = append(mountCmd.Env, fmt.Sprintf("AWS_SECRET_KEY_ID=", secretKey))
+		}
 		mountCmd.Start()
 	}
 
