@@ -63,16 +63,20 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--region", region)
 	}
 
-        if debug_s3, ok := options["debug_s3"]; ok && debug_s3 == "true" {
-                args = append(args, "--debug_s3")
-        }
+	debug_s3, ok := options["debug_s3"]
+	if ok && debug_s3 == "true" {
+		args = append(args, "--debug_s3")
+	}
 
 	mountPath := path.Join("/mnt/goofys", bucket)
 
 	args = append(args, bucket, mountPath)
 
 	if !isMountPoint(mountPath) {
+		exec.Command("umount", mountPath).Run()
+		exec.Command("rm", "-rf", mountPath).Run()
 		os.MkdirAll(mountPath, 0755)
+		
 		mountCmd := exec.Command("goofys", args...)
 		mountCmd.Env = os.Environ()
 		if accessKey, ok := options["access-key"]; ok {
@@ -85,7 +89,16 @@ func Mount(target string, options map[string]string) interface{} {
 		mountCmd.Stderr = &stderr
 		err := mountCmd.Run()
 		if err != nil {
-			return makeResponse("Failure", err.Error() + ": " + stderr.String())
+			errMsg := err.Error() + ": " + stderr.String()
+			if debug_s3 == "true" {
+				errMsg += fmt.Sprintf("; /var/log/syslog follows")
+				grepCmd := exec.Command("sh", "-c", "grep goofys /var/log/syslog | tail")
+				var stdout bytes.Buffer
+				grepCmd.Stdout = &stdout
+				grepCmd.Run()
+				errMsg += stdout.String()
+			}
+			return makeResponse("Failure", errMsg)
 		}
 	}
 
