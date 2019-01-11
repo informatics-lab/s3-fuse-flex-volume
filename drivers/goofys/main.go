@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -55,12 +56,6 @@ func Mount(target string, options map[string]string) interface{} {
 		"--file-mode", fileMode,
 	}
 
-	if accessKey, ok := options["access-key"]; ok {
-		args = append(args, "--access-key", accessKey)
-	}
-	if secretKey, ok := options["secret-key"]; ok {
-		args = append(args, "--secret-key", secretKey)
-	}
 	if endpoint, ok := options["endpoint"]; ok {
 		args = append(args, "--endpoint", endpoint)
 	}
@@ -68,14 +63,43 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--region", region)
 	}
 
+	debug_s3, ok := options["debug_s3"]
+	if ok && debug_s3 == "true" {
+		args = append(args, "--debug_s3")
+	}
+
 	mountPath := path.Join("/mnt/goofys", bucket)
 
 	args = append(args, bucket, mountPath)
 
 	if !isMountPoint(mountPath) {
+		exec.Command("umount", mountPath).Run()
+		exec.Command("rm", "-rf", mountPath).Run()
 		os.MkdirAll(mountPath, 0755)
+		
 		mountCmd := exec.Command("goofys", args...)
-		mountCmd.Start()
+		mountCmd.Env = os.Environ()
+		if accessKey, ok := options["access-key"]; ok {
+			mountCmd.Env = append(mountCmd.Env, "AWS_ACCESS_KEY_ID=" + accessKey)
+		}
+		if secretKey, ok := options["secret-key"]; ok {
+			mountCmd.Env = append(mountCmd.Env, "AWS_SECRET_ACCESS_KEY=" + secretKey)
+		}
+		var stderr bytes.Buffer
+		mountCmd.Stderr = &stderr
+		err := mountCmd.Run()
+		if err != nil {
+			errMsg := err.Error() + ": " + stderr.String()
+			if debug_s3 == "true" {
+				errMsg += fmt.Sprintf("; /var/log/syslog follows")
+				grepCmd := exec.Command("sh", "-c", "grep goofys /var/log/syslog | tail")
+				var stdout bytes.Buffer
+				grepCmd.Stdout = &stdout
+				grepCmd.Run()
+				errMsg += stdout.String()
+			}
+			return makeResponse("Failure", errMsg)
+		}
 	}
 
 	srcPath := path.Join(mountPath, subPath)

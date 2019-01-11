@@ -61,6 +61,7 @@ volumes:
         fileMode: "0644"
         subPath: "key/prefix"
         endpoint: "s3.not-aws.com"
+        debug_s3: false
         region: "us-east-1"
         access-key: "XXXXXXXXXXXXXXXXXXXX"
         secret-key: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
