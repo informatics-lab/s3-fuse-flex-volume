@@ -62,6 +62,12 @@ func Mount(target string, options map[string]string) interface{} {
 	if region, ok := options["region"]; ok {
 		args = append(args, "--region", region)
 	}
+	if uid, ok := options["uid"]; ok {
+		args = append(args, "--uid", uid)
+	}
+	if gid, ok := options["gid"]; ok {
+		args = append(args, "--gid", gid)
+	}
 
 	debug_s3, ok := options["debug_s3"]
 	if ok && debug_s3 == "true" {
