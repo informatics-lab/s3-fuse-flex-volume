@@ -59,6 +59,8 @@ volumes:
         # Optional
         dirMode: "0755"
         fileMode: "0644"
+        uid: "501"
+        gid: "20"
         subPath: "key/prefix"
         endpoint: "s3.not-aws.com"
         debug_s3: false
