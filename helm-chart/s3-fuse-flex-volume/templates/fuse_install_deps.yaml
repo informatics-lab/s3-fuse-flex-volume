@@ -1,0 +1,59 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: fuse_install_deps_script
+data:
+  install_deps.sh: |-
+    #!/ usr/bin/env sh
+
+    # See https://get.docker.com.
+    get_distro() {
+        distro=""
+    	# Every system that we officially support has /etc/os-release
+    	if [ -r /etc/os-release ]; then
+    		distro="$(. /etc/os-release && echo "$ID")"
+    	fi
+    	# Returning an empty string here should be alright since the
+    	# case statements don't act unless you provide an actual value
+    	echo "$distro" | tr '[:upper:]' '[:lower:]'
+    }
+
+
+    run_debian() {
+        chroot /rootfs apt-get update
+        chroot /rootfs apt-get install -y fuse python3-pip
+        chroot /rootfs pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
+        chroot /rootfs curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
+        chroot /rootfs chmod +x /usr/bin/goofys
+    }
+
+
+    run_amazonLinux() {
+        chroot /rootfs yum update -y
+        chroot /rootfs yum install -y fuse python3-pip
+        chroot /rootfs pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
+        chroot /rootfs curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
+        chroot /rootfs chmod +x /usr/bin/goofys
+    }
+
+
+    distro=$(get_distro)
+
+    case $distro in
+
+        amzn)
+            run_amazonLinux
+        ;;
+
+        debian)
+            run_debian
+        ;;
+
+        *)
+            echo "Unsupported distro"
+            exit 1
+        ;;
+
+    esac
+
+    exit 0

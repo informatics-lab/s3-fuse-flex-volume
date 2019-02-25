@@ -20,10 +20,11 @@ spec:
           volumeMounts:
             - mountPath: /rootfs
               name: rootfs
+            - mountPath: /usr/local/src
+              name: install_host_deps_script
           command:
-            - sh
-            - -c
-            - chroot /rootfs apt-get update && chroot /rootfs apt-get install -y fuse python3-pip && chroot /rootfs pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache && chroot /rootfs curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest && chroot /rootfs chmod +x /usr/bin/goofys
+            - bash
+            - /usr/local/src/install_deps.sh
         - name: s3-flex-volume-drivers-deploy
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: Always
@@ -48,3 +49,6 @@ spec:
           hostPath:
             path: /
             type: Directory
+        - name: install_host_deps_script
+          ConfigMap:
+            name: fuse_install_deps_script
