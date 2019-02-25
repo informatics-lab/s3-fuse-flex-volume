@@ -10,6 +10,8 @@ spec:
       name: s3-fuse-flex-volume-deployer
       labels:
         app: s3-fuse-flex-volume-deployer
+      annotations:
+        checksum/config-map: {{ include (print .Template.BasePath "/fuse_install_deps.yaml") . | sha256sum }}
     spec:
       initContainers:
         - name: install-host-deps
@@ -20,11 +22,12 @@ spec:
           volumeMounts:
             - mountPath: /rootfs
               name: rootfs
-            - mountPath: /usr/local/src
-              name: install_host_deps_script
+            - mountPath: /script
+              name: install-host-deps-script
           command:
-            - bash
-            - /usr/local/src/install_deps.sh
+            - sh
+            - -c
+            - cp /script/install_deps.sh /rootfs/tmp/ && chroot /rootfs sh /tmp/install_deps.sh
         - name: s3-flex-volume-drivers-deploy
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: Always
@@ -49,6 +52,6 @@ spec:
           hostPath:
             path: /
             type: Directory
-        - name: install_host_deps_script
-          ConfigMap:
-            name: fuse_install_deps_script
+        - name: install-host-deps-script
+          configMap:
+            name: fuse-install-deps-script

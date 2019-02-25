@@ -1,10 +1,10 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: fuse_install_deps_script
+  name: fuse-install-deps-script
 data:
   install_deps.sh: |-
-    #!/ usr/bin/env sh
+    #!/usr/bin/env sh
 
     # See https://get.docker.com.
     get_distro() {
@@ -20,20 +20,20 @@ data:
 
 
     run_debian() {
-        chroot /rootfs apt-get update
-        chroot /rootfs apt-get install -y fuse python3-pip
-        chroot /rootfs pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
-        chroot /rootfs curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
-        chroot /rootfs chmod +x /usr/bin/goofys
+        apt-get update
+        apt-get install -y fuse python3-pip git
+        pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
+        curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
+        chmod +x /usr/bin/goofys
     }
 
 
     run_amazonLinux() {
-        chroot /rootfs yum update -y
-        chroot /rootfs yum install -y fuse python3-pip
-        chroot /rootfs pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
-        chroot /rootfs curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
-        chroot /rootfs chmod +x /usr/bin/goofys
+        yum update -y
+        yum install -y fuse-devel fuse-libs fuse python3-pip git
+        pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
+        curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
+        chmod +x /usr/bin/goofys
     }
 
 
