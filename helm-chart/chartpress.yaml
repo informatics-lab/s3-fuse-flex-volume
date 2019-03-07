@@ -1,0 +1,5 @@
+charts:
+  - name: s3-fuse-flex-volume
+    repo:
+      git: informatics-lab/helm-charts-repo
+      published: http://charts.informaticslab.co.uk/

@@ -1,0 +1,22 @@
+sudo: required
+language: python
+python:
+- '3.6'
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_6f4fc646cfd4_key -iv $encrypted_6f4fc646cfd4_iv -in github_deploy_key.enc -out github_deploy_key -d
+
+install:
+- curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash
+- pip install --default-timeout=100 git+https://github.com/jupyterhub/chartpress.git
+
+script:
+- git diff
+
+deploy:
+- provider: script
+  skip_cleanup: true
+  script: GIT_SSH_COMMAND="ssh -i ${PWD}/github_deploy_key" chartpress --tag $TRAVIS_TAG --publish-chart
+  on:
+    branch: master
+    tags: true
