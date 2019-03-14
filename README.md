@@ -46,7 +46,7 @@ containers:
 
 ### goofys
 
-Goofys will only mount a specific bucket so you must provide the `bucket` option.
+Goofys will only mount a specific bucket so you must provide the `bucket` option.  Make sure the instances running your kubernetes nodes have permission to write to the bucket (e.g on AWS console, select a node instance and make sure there is an IAM that has a S3 write policy attached)
 
 ```yaml
 volumes:
