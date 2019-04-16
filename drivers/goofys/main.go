@@ -21,7 +21,8 @@ func makeResponse(status, message string) map[string]interface{} {
 func Init() interface{} {
 	resp := makeResponse("Success", "No Initialization required")
 	resp["capabilities"] = map[string]interface{}{
-		"attach": false,
+		"attach":         false,
+		"selinuxRelabel": false,
 	}
 	return resp
 }
