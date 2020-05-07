@@ -75,6 +75,11 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--debug_s3")
 	}
 
+	requester_pays, ok := options["requester_pays"]
+	if ok && requester_pays == "true" {
+		args = append(args, "--requester-pays")
+	}
+
 	mountPath := path.Join("/mnt/goofys", bucket)
 
 	args = append(args, bucket, mountPath)
@@ -83,7 +88,7 @@ func Mount(target string, options map[string]string) interface{} {
 		exec.Command("umount", mountPath).Run()
 		exec.Command("rm", "-rf", mountPath).Run()
 		os.MkdirAll(mountPath, 0755)
-		
+
 		mountCmd := exec.Command("goofys", args...)
 		mountCmd.Env = os.Environ()
 		if accessKey, ok := options["access-key"]; ok {
