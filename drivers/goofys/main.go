@@ -75,8 +75,8 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--debug_s3")
 	}
 
-	requester_pays, ok := options["requester_pays"]
-	if ok && requester_pays == "true" {
+	requesterPays, ok := options["requesterPays"]
+	if ok && requesterPays == "true" {
 		args = append(args, "--requester-pays")
 	}
 

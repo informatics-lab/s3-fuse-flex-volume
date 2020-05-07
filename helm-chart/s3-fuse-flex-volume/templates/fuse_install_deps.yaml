@@ -23,7 +23,7 @@ data:
         apt-get update
         apt-get install -y fuse python3-pip git
         pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
-        curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
+        curl -L -o /usr/bin/goofys https://github.com/kahing/goofys/releases/latest/download/goofys
         chmod +x /usr/bin/goofys
     }
 
@@ -32,7 +32,7 @@ data:
         yum update -y
         yum install -y fuse-devel fuse-libs fuse python3-pip git
         pip3 install git+git://github.com/met-office-lab/pysssix.git@big_cache
-        curl -L -o /usr/bin/goofys http://bit.ly/goofys-latest
+        curl -L -o /usr/bin/goofys https://github.com/kahing/goofys/releases/latest/download/goofys
         chmod +x /usr/bin/goofys
     }
 
