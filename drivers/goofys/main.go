@@ -75,6 +75,11 @@ func Mount(target string, options map[string]string) interface{} {
 		args = append(args, "--debug_s3")
 	}
 
+	use_content_type, ok := options["use_content_typee"]
+	if ok && use_content_type == "true" {
+		args = append(args, "--use-content-type")
+	}
+
 	mountPath := path.Join("/mnt/goofys", bucket)
 
 	args = append(args, bucket, mountPath)
